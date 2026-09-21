@@ -20,7 +20,7 @@ limitations under the License.
 
 from __future__ import print_function
 
-__version__ = '25.0.0'
+__version__ = '25.0.1'
 
 import math
 import os

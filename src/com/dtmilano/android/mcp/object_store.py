@@ -25,7 +25,7 @@ limitations under the License.
 
 from typing import Dict, Any, Optional
 
-__version__ = '25.0.0'
+__version__ = '25.0.1'
 
 
 class ObjectStore:
