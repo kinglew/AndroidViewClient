@@ -1,3 +1,8 @@
+import pytest
+
+pytestmark = pytest.mark.connected
+
+
 def test_exists(helper, calculator, oid_digit):
     assert helper.ui_object.exists(oid=oid_digit)
 

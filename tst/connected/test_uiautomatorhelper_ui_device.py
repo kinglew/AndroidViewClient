@@ -1,7 +1,10 @@
 import threading
 import time
 
+import pytest
 from culebratester_client import WindowHierarchy, ObjectRef
+
+pytestmark = pytest.mark.connected
 
 
 def test_click(helper):

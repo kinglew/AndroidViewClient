@@ -18,10 +18,10 @@ limitations under the License.
 @author: Diego Torres Milano
 """
 
-from __future__ import print_function
+from __future__ import annotations, print_function
 
 import json
-from typing import Optional, Union, Dict, Tuple
+from typing import Literal, Optional, Union, Dict, Tuple
 
 import culebratester_client
 from culebratester_client import WindowHierarchyChild, WindowHierarchy
@@ -3738,15 +3738,15 @@ class ViewClient:
                 self.windows[int('0x' + wid, 16)] = package
             return self.windows
 
-    def findViewById(self, viewId, root="ROOT", viewFilter=None):
+    def findViewById(self, viewId: str, root: View | Literal["ROOT"] = "ROOT", viewFilter=None) -> View | None:
         """
         Finds the View with the specified viewId.
 
         @type viewId: str
         @param viewId: the ID of the view to find
-        @type root: str
-        @type root: View
-        @param root: the root node of the tree where the View will be searched
+        @type root: View or str
+        @param root: the root node of the tree where the View will be searched, or the
+        string C{"ROOT"} to search the whole tree
         @type: viewFilter: function
         @param viewFilter: a function that will be invoked providing the candidate View as a parameter
         and depending on the return value (C{True} or C{False}) the View will be
@@ -3754,6 +3754,7 @@ class ViewClient:
         This can be C{None} and no extra filtering is applied.
 
         @return: the C{View} found or C{None}
+        @raise ValueError: if C{root} is a str other than C{"ROOT"}
         """
 
         if self.uiAutomatorHelper:
@@ -3763,8 +3764,10 @@ class ViewClient:
         if not root:
             return None
 
-        if root == "ROOT":
-            return self.findViewById(viewId, self.root, viewFilter)
+        if isinstance(root, str):
+            if root == "ROOT":
+                return self.findViewById(viewId, self.root, viewFilter)
+            raise ValueError("Invalid root: '%s', the only str accepted is 'ROOT'" % root)
 
         try:
             rootId = root.getId()
@@ -3806,15 +3809,15 @@ class ViewClient:
                 else:
                     return foundView
 
-    def findViewByIdOrRaise(self, viewId, root="ROOT", viewFilter=None):
+    def findViewByIdOrRaise(self, viewId: str, root: View | Literal["ROOT"] = "ROOT", viewFilter=None) -> View:
         """
         Finds the View or raise a ViewNotFoundException.
 
         @type viewId: str
         @param viewId: the ID of the view to find
-        @type root: str
-        @type root: View
-        @param root: the root node of the tree where the View will be searched
+        @type root: View or str
+        @param root: the root node of the tree where the View will be searched, or the
+        string C{"ROOT"} to search the whole tree
         @type: viewFilter: function
         @param viewFilter: a function that will be invoked providing the candidate View as a parameter
         and depending on the return value (C{True} or C{False}) the View will be
@@ -3822,6 +3825,7 @@ class ViewClient:
         This can be C{None} and no extra filtering is applied.
         @return: the View found
         @raise ViewNotFoundException: raise the exception if View not found
+        @raise ValueError: if C{root} is a str other than C{"ROOT"}
         """
 
         view = self.findViewById(viewId, root, viewFilter)
